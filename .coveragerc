@@ -1,0 +1,14 @@
+[run]
+source=nna
+omit =
+    .cache/*
+    */tests/*
+    docs/*
+    .pytest_cache/*
+    setup.py
+    _version.py
+    nna.egg-info/*
+    .github/*
+
+[paths]
+source = nna
