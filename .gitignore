@@ -132,4 +132,4 @@ dmypy.json
 .idea/
 
 # Project version
-nna/_version.py
+arca/_version.py
