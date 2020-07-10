@@ -15,7 +15,7 @@ def test_name():
     assert get_all_components()["sum_num"].func_name == "sum_num"
 
 def test_output():
-    out_meta = get_all_components()["create_dict"].output
+    out_meta = get_all_components()["create_dict"].metadata.output
     assert out_meta[0].name == "trevisani"
     assert out_meta[0].type_hint is Any
     assert out_meta[1].name == "test"
@@ -25,7 +25,7 @@ def test_output():
 
 
 def test_input_list():
-    all_input = get_all_components()["sum_num"].input_list
+    all_input = get_all_components()["sum_num"].metadata.input_list
     assert all_input[0].name == "Input Number 1"
     assert all_input[0].var_name == "num_1"
     assert all_input[0].type_hint is int

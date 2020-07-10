@@ -4,6 +4,7 @@ import logging
 import pkgutil
 import re
 import weakref
+from collections import namedtuple
 from functools import lru_cache, wraps
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Sequence, \
     Union
@@ -127,18 +128,24 @@ class ComponentMetadata:
         func_name = None
         if self._obj_call:
             func_name = self._obj_call.__name__
-        return f"Name: {self._name},"\
-               f" Parameters name: {self._param_names}," \
-               f" Output name: {self._output_name}," \
-               f" Wrapped Function: {func_name}"
+        return (
+            f"(Name: {self._name},"
+            f" Parameters name: {self._param_names}," 
+            f" Output name: {self._output_name}," 
+            f" Wrapped Function: {func_name})"
+        )
 
-    def __call__(self, obj_call: Callable) -> Callable:
-        self._obj_call = obj_call
+    def __call__(self, obj_call: Optional[Callable] = None) -> Callable:
+        if obj_call:
+            self._obj_call = obj_call
+        else:
+            obj_call = self._obj_call
         @wraps(obj_call)
         def wrapped_function(*args, **kwargs):
             self.setup(obj_call)
-            obj_call(*args, **kwargs)
+            return_value = obj_call(*args, **kwargs)
             self.teardown(obj_call)
+            return return_value
         wrapped_function.__arca_mark__ = weakref.ref(self)
         return wrapped_function
 
@@ -157,9 +164,14 @@ def get_component(obj_call: Callable) -> Optional[ComponentMetadata]:
 @lru_cache(maxsize=1)
 def get_all_components() -> Dict:
     all_func = {}
+    CmpInfo = namedtuple("CmpInfo", ("metadata", "function"))
     for module_info in pkgutil.iter_modules(component.__path__):
-        module_import = importlib.import_module(f"{component.__package__}.{module_info.name}")
+        module_import = importlib.import_module(
+            f"{component.__package__}.{module_info.name}"
+        )
         for name, ref in inspect.getmembers(module_import, is_component):
-            all_func[name] = ref.__arca_mark__()
+            all_func[name] = CmpInfo(metadata=ref.__arca_mark__(), function=ref)
     log.debug(f"All components loaded: {all_func.keys()}")
     return all_func
+
+
