@@ -19,7 +19,6 @@ def sum_num(num_1: int, num_2: int) -> int:
 
 @mark_component(
     name="Create a dictionary",
-    param_names={"num": "Number to be added", "list_num": "List with numbers"},
     unpack_output=["trevisani", "test", ("num", int)],
 )
 def create_dict() -> Dict[str, Any]:
