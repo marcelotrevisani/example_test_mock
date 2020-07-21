@@ -1,5 +1,4 @@
 from random import randint
-from typing import Any, Dict
 
 from arca import mark_component
 
