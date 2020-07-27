@@ -30,3 +30,11 @@ def create_even_odd_numbers():
     rand_num = randint(0, 9999)
     odd_num = rand_num if rand_num % 2 == 1 else rand_num + 1
     return {"even": even_num, "odd": odd_num}
+
+
+@mark_component(
+    name="Convert to string.",
+)
+def convert_to_string(value):
+    """Convert an object to string."""
+    return str(value)
